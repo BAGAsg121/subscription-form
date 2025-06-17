@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Subscription Plan Setup</title>
+  <style>
+    body {
+      background-color: #ffffff;
+      font-family: 'Segoe UI', sans-serif;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fffbea;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #fbbf24;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    label {
+      font-weight: 600;
+      margin-top: 10px;
+      display: block;
+      color: #444;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="file"],
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      margin-bottom: 16px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+
+    .plan-group {
+      background: #fff9e5;
+      padding: 20px;
+      border: 1px solid #fcd34d;
+      margin-top: 20px;
+      border-radius: 10px;
+    }
+
+    button {
+      background-color: #facc15;
+      color: black;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #eab308;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Setup Subscription Plans</h2>
+    <form action="#" method="POST" enctype="multipart/form-data">
+      <label for="admin">Admin Name</label>
+      <input type="text" id="admin" name="admin_name" required />
+
+      <label for="org">Organization Name</label>
+      <input type="text" id="org" name="organization_name" required />
+
+      <label for="subs">Number of Subscription Plans</label>
+      <input type="number" id="subs" name="number_of_plans" min="1" max="3" required />
+
+      <!-- Plan 1 -->
+      <div class="plan-group">
+        <label for="plan1name">Subscription Plan 1 Name</label>
+        <input type="text" id="plan1name" name="plan_1_name" />
+
+        <label for="plan1code">Plan Code 1</label>
+        <input type="text" id="plan1code" name="plan_code_1" />
+
+        <label for="price1">Price Plan 1 (INR)</label>
+        <input type="number" id="price1" name="price_plan_1" />
+      </div>
+
+      <!-- Plan 2 -->
+      <div class="plan-group">
+        <label for="plan2name">Subscription Plan 2 Name</label>
+        <input type="text" id="plan2name" name="plan_2_name" />
+
+        <label for="plan2code">Plan Code 2</label>
+        <input type="text" id="plan2code" name="plan_code_2" />
+
+        <label for="price2">Price Plan 2 (INR)</label>
+        <input type="number" id="price2" name="price_plan_2" />
+      </div>
+
+      <!-- Plan 3 -->
+      <div class="plan-group">
+        <label for="plan3name">Subscription Plan 3 Name</label>
+        <input type="text" id="plan3name" name="plan_3_name" />
+
+        <label for="plan3code">Plan Code 3</label>
+        <input type="text" id="plan3code" name="plan_code_3" />
+
+        <label for="price3">Price Plan 3 (INR)</label>
+        <input type="number" id="price3" name="price_plan_3" />
+      </div>
+
+      <label for="billingCycle">Billing Cycle</label>
+      <select name="billing_cycle" id="billingCycle" required>
+        <option value="month">Monthly</option>
+        <option value="week">Weekly</option>
+        <option value="year">Yearly</option>
+      </select>
+
+      <label for="logo">Company Logo</label>
+      <input type="file" id="logo" name="company_logo" accept="image/*" required />
+
+      <button type="submit">Submit Plan Details</button>
+    </form>
+  </div>
+</body>
+</html>
