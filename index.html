@@ -1,55 +1,568 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>n8n Webhook Form Test</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 40px;
-    }
-    input, button {
-      padding: 8px;
-      margin-top: 10px;
-      width: 300px;
-    }
-  </style>
-</head>
-<body>
-
-  <h2>Send Data to n8n Webhook</h2>
-
-  <form id="webhookForm" method="POST" action="https://b00d-14-195-186-114.ngrok-free.app/webhook-test/f159c0f3-9ca4-429f-97a3-d58ceefb0c4c">
-    <input type="text" name="username" placeholder="Enter Username" required><br>
-    <input type="email" name="email" placeholder="Enter Email" required><br>
-    <button type="submit">Send to Webhook</button>
-  </form>
-
-  <div id="response"></div>
-
-  <script>
-    const form = document.getElementById('webhookForm');
-    const responseDiv = document.getElementById('response');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const formData = new FormData(form);
-      const data = new URLSearchParams(formData);
-
-      try {
-        const res = await fetch(form.action, {
-          method: 'POST',
-          body: data
-        });
-
-        const text = await res.text();
-        responseDiv.innerHTML = `<p><strong>Response:</strong><br>${text}</p>`;
-      } catch (err) {
-        responseDiv.innerHTML = `<p style="color:red;">Error sending data: ${err}</p>`;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Subscription Plans</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --primary: #00d1b2;
+        --primary-dark: #00b39e;
+        --secondary: #485fc7;
+        --dark: #0f172a;
+        --light: #f8f9fa;
+        --gradient: linear-gradient(135deg, #00d1b2 0%, #485fc7 100%);
       }
-    });
-  </script>
-
-</body>
+      
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        background-color: #0f172a;
+        color: #e2e8f0;
+        overflow-x: hidden;
+        line-height: 1.6;
+      }
+      
+      #3d-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        opacity: 0.3;
+      }
+      
+      .container {
+        width: 95%;
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 3rem 2rem;
+        perspective: 1000px;
+      }
+      
+      .header {
+        text-align: center;
+        margin-bottom: 4rem;
+        position: relative;
+        z-index: 1;
+      }
+      
+      .header h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        background: linear-gradient(90deg, #fff 0%, #a5b4fc 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+      }
+      
+      .header p {
+        font-size: 1.25rem;
+        color: #94a3b8;
+        max-width: 700px;
+        margin: 0 auto;
+      }
+      
+      .plans {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        position: relative;
+        z-index: 1;
+      }
+      
+      .plan {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 2.5rem 2rem;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transform-style: preserve-3d;
+        position: relative;
+        overflow: hidden;
+        transform: translateZ(20px);
+        box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.3);
+        will-change: transform, box-shadow;
+      }
+      
+      .plan::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient);
+        transform: translateZ(10px);
+        transition: all 0.3s ease;
+      }
+      
+      .plan::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
+        border-radius: 16px;
+        pointer-events: none;
+        transform: translateZ(5px);
+        transition: all 0.3s ease;
+      }
+      
+      .plan:hover {
+        transform: translateY(-15px) rotateX(10deg) rotateY(5deg) scale(1.03) translateZ(30px);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        border-color: rgba(99, 102, 241, 0.5);
+      }
+      
+      .plan:hover::before {
+        height: 6px;
+        transform: translateZ(20px);
+      }
+      
+      .plan:hover::after {
+        transform: translateZ(15px);
+        background: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+      }
+      
+      .basic::before { background: linear-gradient(90deg, #00d1b2 0%, #36d1dc 100%); }
+      .standard::before { background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%); }
+      .premium::before { background: linear-gradient(90deg, #f59e0b 0%, #f97316 100%); }
+      
+      .plan h2 {
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
+        color: #fff;
+        font-weight: 700;
+      }
+      
+      .plan p {
+        color: #94a3b8;
+        margin-bottom: 1.5rem;
+        font-size: 1rem;
+      }
+      
+      ul {
+        list-style: none;
+        margin: 1.5rem 0;
+      }
+      
+      ul li {
+        position: relative;
+        padding-left: 1.75rem;
+        margin-bottom: 0.75rem;
+        color: #cbd5e1;
+      }
+      
+      ul li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: var(--primary);
+        font-weight: bold;
+      }
+      
+      .cta {
+        margin-top: 2.5rem;
+        text-align: center;
+      }
+      
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.875rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        border: none;
+        cursor: pointer;
+      }
+      
+      .basic .button { background: linear-gradient(90deg, #00d1b2 0%, #36d1dc 100%); color: #0f172a; }
+      .standard .button { background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%); color: white; }
+      .premium .button { background: linear-gradient(90deg, #f59e0b 0%, #f97316 100%); color: white; }
+      
+      .button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.3);
+      }
+      
+      .button:active {
+        transform: translateY(0);
+      }
+      
+      .footer {
+        margin-top: 5rem;
+        text-align: center;
+        color: #64748b;
+        font-size: 0.875rem;
+      }
+      
+      @media (max-width: 1024px) {
+        .plans {
+          grid-template-columns: 1fr;
+          max-width: 600px;
+          margin: 0 auto;
+        }
+        
+        .header h1 {
+          font-size: 2.5rem;
+        }
+      }
+      
+      /* 3D Floating animation */
+      @keyframes float {
+        0% { 
+          transform: translateY(0px) rotateX(0deg) rotateY(0deg) translateZ(20px);
+          box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.3);
+        }
+        50% { 
+          transform: translateY(-15px) rotateX(5deg) rotateY(5deg) translateZ(30px);
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+        }
+        100% { 
+          transform: translateY(0px) rotateX(0deg) rotateY(0deg) translateZ(20px);
+          box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.3);
+        }
+      }
+      
+      .plan {
+        animation: float 8s ease-in-out infinite;
+        transform-style: preserve-3d;
+        perspective: 1000px;
+      }
+      
+      .plan:nth-child(2) {
+        animation-delay: 0.5s;
+      }
+      
+      .plan:nth-child(3) {
+        animation-delay: 1s;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="3d-background"></canvas>
+    <div class="container">
+      <div class="header">
+        <h1>Choose Your Subscription Plan</h1>
+        <p>Scale your growth with a plan tailored to your needs.</p>
+      </div>
+      <div class="plans">
+        <div class="plan basic">
+          <h2>🔹 Basic Plan — ₹5K/month</h2>
+          <p><em>Single provider for each product</em></p>
+          <ul>
+            <li>Unlimited channel expansion</li>
+            <li>Branded network launch tools</li>
+            <li>Earnings tracking dashboard</li>
+            <li>3-month data access</li>
+            <li>Regulation-compliant platform updates</li>
+            <li>Pricing and commission management</li>
+            <li>Customer care manager support</li>
+            <li>Free training sessions</li>
+            <li>GST invoicing (Admin & Network)</li>
+            <li>Device support RM (Admin)</li>
+          </ul>
+          <div class="cta">
+            <a href="https://billing.zohosecure.in/subscribe/009b6e2fe99c044d7c6f3684d0f3ecd71648718ab4cc0d740823bcb88ecfdc2b/1" class="button" target="_blank">Subscribe to Basic</a>
+          </div>
+        </div>
+        <div class="plan standard">
+          <h2>🔸 Standard Plan — ₹15K/month</h2>
+          <p><em>2 providers for multiple products</em></p>
+          <ul>
+            <li>Includes everything in Basic</li>
+            <li>Extended earnings tracking dashboard</li>
+            <li>Admin Eloka ticketing service</li>
+            <li>Network Eloka ticketing service</li>
+            <li>Branded mobile app</li>
+            <li>Option of online deposit for admin</li>
+          </ul>
+          <div class="cta">
+            <a href="https://billing.zohosecure.in/subscribe/009b6e2fe99c044d7c6f3684d0f3ecd71648718ab4cc0d740823bcb88ecfdc2b/2" class="button" target="_blank">Subscribe to Standard</a>
+          </div>
+        </div>
+        <div class="plan premium">
+          <h2>👑 Premium Plan — ₹25K/month</h2>
+          <p><em>2 or more providers for multiple products</em></p>
+          <ul>
+            <li>Includes everything in Standard</li>
+            <li>Tax advisory relationship manager</li>
+            <li>Onboarding support RM</li>
+            <li>Dedicated Admin/network manager</li>
+            <li>Monthly product training (3 sessions)</li>
+            <li>Fund-in dedicated bank account</li>
+            <li>Fund-in/out dedicated bank accounts</li>
+          </ul>
+          <div class="cta">
+            <a href="https://billing.zohosecure.in/subscribe/009b6e2fe99c044d7c6f3684d0f3ecd71648718ab4cc0d740823bcb88ecfdc2b/3" class="button" target="_blank">Subscribe to Premium</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <p>Note: All subscription amounts are exclusive of GST.</p>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script>
+      // Enhanced 3D Background with Particles
+      document.addEventListener('DOMContentLoaded', () => {
+        // Scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({
+          canvas: document.getElementById('3d-background'),
+          alpha: true,
+          antialias: true
+        });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        
+        // Camera position
+        camera.position.z = 30;
+        
+        // Create particles
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particleCount = 5000;
+        
+        const posArray = new Float32Array(particleCount * 3);
+        
+        for (let i = 0; i < particleCount * 3; i++) {
+          posArray[i] = (Math.random() - 0.5) * 100;
+        }
+        
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        
+        // Particle material
+        const particlesMaterial = new THREE.PointsMaterial({
+          size: 0.1,
+          color: '#4f46e5',
+          transparent: true,
+          opacity: 0.8,
+          blending: THREE.AdditiveBlending
+        });
+        
+        // Create particle system
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+        
+        // Add a light
+        const light = new THREE.PointLight(0xffffff, 1);
+        light.position.set(10, 10, 10);
+        scene.add(light);
+        
+        // Add floating shapes
+        const shapes = [];
+        const shapeGeometry = new THREE.IcosahedronGeometry(1, 0);
+        const shapeMaterial = new THREE.MeshPhongMaterial({
+          color: 0x00d1b2,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.6,
+          shininess: 100
+        });
+        
+        // Create multiple floating shapes
+        for (let i = 0; i < 5; i++) {
+          const shape = new THREE.Mesh(shapeGeometry, shapeMaterial.clone());
+          shape.position.set(
+            (Math.random() - 0.5) * 40,
+            (Math.random() - 0.5) * 40,
+            (Math.random() - 0.5) * 40
+          );
+          shape.scale.setScalar(5 + Math.random() * 5);
+          shape.rotation.set(
+            Math.random() * Math.PI,
+            Math.random() * Math.PI,
+            0
+          );
+          shapes.push({
+            mesh: shape,
+            speed: 0.1 + Math.random() * 0.2,
+            rotation: {
+              x: (Math.random() - 0.5) * 0.01,
+              y: (Math.random() - 0.5) * 0.01,
+              z: (Math.random() - 0.5) * 0.01
+            }
+          });
+          scene.add(shape);
+        }
+        
+        // Mouse movement effect
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetX = 0;
+        let targetY = 0;
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+        
+        document.addEventListener('mousemove', (event) => {
+          mouseX = (event.clientX - windowHalfX) * 0.001;
+          mouseY = (event.clientY - windowHalfY) * 0.001;
+        });
+        
+        // Animation loop
+        const clock = new THREE.Clock();
+        
+        function animate() {
+          requestAnimationFrame(animate);
+          
+          const elapsedTime = clock.getElapsedTime();
+          
+          // Update particles
+          const positions = particlesGeometry.attributes.position.array;
+          for (let i = 0; i < positions.length; i += 3) {
+            positions[i + 1] += Math.sin(elapsedTime * 0.5 + positions[i] * 0.01) * 0.05;
+            positions[i] += Math.cos(elapsedTime * 0.3 + positions[i + 1] * 0.01) * 0.05;
+            positions[i + 2] += Math.sin(elapsedTime * 0.2 + positions[i + 2] * 0.01) * 0.05;
+          }
+          particlesGeometry.attributes.position.needsUpdate = true;
+          
+          // Update shapes
+          shapes.forEach((shape, i) => {
+            shape.mesh.rotation.x += shape.rotation.x;
+            shape.mesh.rotation.y += shape.rotation.y;
+            shape.mesh.rotation.z += shape.rotation.z;
+            
+            // Float up and down
+            shape.mesh.position.y += Math.sin(elapsedTime * shape.speed) * 0.05;
+          });
+          
+          // Smooth camera movement based on mouse position
+          targetX = mouseX * 20;
+          targetY = -mouseY * 20;
+          
+          camera.position.x += (targetX - camera.position.x) * 0.05;
+          camera.position.y += (targetY - camera.position.y) * 0.05;
+          
+          // Make camera look at center
+          camera.lookAt(scene.position);
+          
+          renderer.render(scene, camera);
+        }
+        
+        // Handle window resize
+        function onWindowResize() {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        window.addEventListener('resize', onWindowResize, false);
+        
+        // Start animation
+        animate();
+        
+        // Enhanced 3D effect for plans
+        const plans = document.querySelectorAll('.plan');
+        
+        plans.forEach((plan, index) => {
+          // Store initial transform values
+          const initialTransform = {
+            x: 0,
+            y: 0,
+            z: 20,
+            rotateX: 0,
+            rotateY: 0,
+            scale: 1
+          };
+          
+          // Add depth on hover
+          plan.addEventListener('mouseenter', () => {
+            gsap.to(plan, {
+              '--depth': '30px',
+              duration: 0.5,
+              ease: 'power2.out'
+            });
+          });
+          
+          plan.addEventListener('mouseleave', () => {
+            gsap.to(plan, {
+              '--depth': '20px',
+              duration: 0.5,
+              ease: 'elastic.out(1, 0.5)'
+            });
+          });
+          
+          // 3D tilt effect based on mouse position
+          plan.addEventListener('mousemove', (e) => {
+            const rect = plan.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Calculate rotation based on mouse position
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = (y - centerY) / 30;
+            const rotateY = (centerX - x) / 30;
+            
+            // Add perspective to the transform
+            plan.style.transform = `
+              perspective(1000px)
+              rotateX(${rotateX}deg)
+              rotateY(${rotateY}deg)
+              translateZ(calc(var(--depth, 20px) * 1.5))
+              scale(1.03)
+            `;
+            
+            // Add subtle shadow based on tilt
+            const shadowX = rotateY * 10;
+            const shadowY = rotateX * 10;
+            plan.style.boxShadow = `${shadowX}px ${shadowY}px 30px rgba(0, 0, 0, 0.3)`;
+            
+            // Add lighting effect
+            plan.style.setProperty('--light-pos-x', `${(x / rect.width) * 100}%`);
+            plan.style.setProperty('--light-pos-y', `${(y / rect.height) * 100}%`);
+          });
+          
+          // Reset on mouse leave
+          plan.addEventListener('mouseleave', () => {
+            gsap.to(plan, {
+              rotateX: 0,
+              rotateY: 0,
+              scale: 1,
+              x: 0,
+              y: 0,
+              boxShadow: '0 10px 30px -15px rgba(0, 0, 0, 0.3)',
+              duration: 1,
+              ease: 'elastic.out(1, 0.5)',
+              clearProps: 'transform, box-shadow, --light-pos-x, --light-pos-y'
+            });
+          });
+          
+          // Add staggered animation delay
+          gsap.set(plan, { '--delay': index * 0.1 });
+        });
+        
+        // Add global mousemove for light effect
+        document.addEventListener('mousemove', (e) => {
+          const x = e.clientX / window.innerWidth;
+          const y = e.clientY / window.innerHeight;
+          
+          document.documentElement.style.setProperty('--global-light-x', `${x * 100}%`);
+          document.documentElement.style.setProperty('--global-light-y', `${y * 100}%`);
+        });
+      });
+    </script>
+  </body>
 </html>
