@@ -1,568 +1,794 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Subscription Plans</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-      :root {
-        --primary: #00d1b2;
-        --primary-dark: #00b39e;
-        --secondary: #485fc7;
-        --dark: #0f172a;
-        --light: #f8f9fa;
-        --gradient: linear-gradient(135deg, #00d1b2 0%, #485fc7 100%);
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Choose Your Plan</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 50%, #141434 100%);
+      color: white;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .step-indicator {
+      color: #888;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .main-title {
+      font-size: 2.5rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Tab Navigation */
+    .tab-navigation {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 3rem;
+    }
+
+    .tab-selector {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 30px;
+      padding: 6px;
+      display: flex;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.7);
+      padding: 12px 24px;
+      border-radius: 24px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      min-width: 120px;
+    }
+
+    .tab-btn.active {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+    }
+
+    .tab-btn:not(.active):hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .best-value-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #00d084;
+      color: white;
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+
+    /* Plans Container */
+    .plans-container {
+      position: relative;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .plan-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+      border-radius: 16px;
+      padding: 2rem;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .plan-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s;
+    }
+
+    .plan-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .plan-card:hover::before {
+      transform: translateX(100%);
+    }
+
+    .plan-card.recommended {
+      border-color: #e50914;
+      box-shadow: 0 0 30px rgba(229, 9, 20, 0.2);
+      background: linear-gradient(135deg, rgba(229, 9, 20, 0.1) 0%, rgba(229, 9, 20, 0.05) 100%);
+    }
+
+    .plan-card.basic {
+      border-color: #6366f1;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+    }
+
+    .plan-card.premium {
+      border-color: #d946ef;
+      background: linear-gradient(135deg, rgba(217, 70, 239, 0.1) 0%, rgba(217, 70, 239, 0.05) 100%);
+    }
+
+    .recommended-badge {
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg, #e50914, #f40612);
+      padding: 8px 16px;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: white;
+      border-radius: 0 0 12px 12px;
+      min-width: 140px;
+    }
+
+    .plan-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      padding-top: 0.5rem;
+    }
+
+    .plan-card.recommended .plan-header {
+      padding-top: 2rem;
+    }
+
+    .plan-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: white;
+    }
+
+    .plan-price {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 4px;
+      margin-bottom: 1rem;
+    }
+
+    .currency {
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #ccc;
+    }
+
+    .amount {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: white;
+    }
+
+    .period {
+      font-size: 1rem;
+      color: #888;
+      font-weight: 400;
+    }
+
+    .plan-desc {
+      color: #bbb;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .quality-info {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .quality-badge {
+      display: inline-block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .quality-subtitle {
+      color: #888;
+      font-size: 0.85rem;
+    }
+
+    .plan-features {
+      flex-grow: 1;
+      margin-bottom: 1.5rem;
+    }
+
+    .feature {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 0.75rem;
+      padding: 6px 0;
+      color: #ddd;
+      line-height: 1.4;
+      font-size: 0.9rem;
+    }
+
+    .feature:last-child {
+      margin-bottom: 0;
+    }
+
+    .feature::before {
+      content: '✓';
+      color: #00d084;
+      font-weight: bold;
+      flex-shrink: 0;
+      font-size: 1rem;
+    }
+
+    .subscribe-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #e50914 0%, #b8070f 100%);
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: auto;
+    }
+
+    .subscribe-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(229, 9, 20, 0.4);
+      background: linear-gradient(135deg, #f40612 0%, #cc0510 100%);
+    }
+
+    .subscribe-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Savings badges */
+    .savings-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: #00d084;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .plan-card.recommended .savings-badge {
+      top: 2.5rem;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .footer p {
+      color: #888;
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+
+    .footer strong {
+      color: #fff;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .plans-grid {
+        gap: 1rem;
       }
       
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+      .plan-card {
+        padding: 1.5rem;
       }
       
-      body {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        background-color: #0f172a;
-        color: #e2e8f0;
-        overflow-x: hidden;
-        line-height: 1.6;
+      .amount {
+        font-size: 2rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-title {
+        font-size: 2rem;
       }
       
-      #3d-background {
-        position: fixed;
-        top: 0;
-        left: 0;
+      .plans-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      
+      .plan-card {
+        padding: 1.5rem;
+      }
+      
+      .amount {
+        font-size: 2rem;
+      }
+
+      .tab-selector {
+        flex-direction: column;
         width: 100%;
-        height: 100%;
-        z-index: -1;
-        opacity: 0.3;
-      }
-      
-      .container {
-        width: 95%;
-        max-width: 1400px;
-        margin: 2rem auto;
-        padding: 3rem 2rem;
-        perspective: 1000px;
-      }
-      
-      .header {
-        text-align: center;
-        margin-bottom: 4rem;
-        position: relative;
-        z-index: 1;
-      }
-      
-      .header h1 {
-        font-size: 3.5rem;
-        font-weight: 700;
-        background: linear-gradient(90deg, #fff 0%, #a5b4fc 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 1rem;
-      }
-      
-      .header p {
-        font-size: 1.25rem;
-        color: #94a3b8;
-        max-width: 700px;
+        max-width: 300px;
         margin: 0 auto;
       }
-      
-      .plans {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-        position: relative;
-        z-index: 1;
-      }
-      
-      .plan {
-        background: rgba(30, 41, 59, 0.7);
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
-        padding: 2.5rem 2rem;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        transform-style: preserve-3d;
-        position: relative;
-        overflow: hidden;
-        transform: translateZ(20px);
-        box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.3);
-        will-change: transform, box-shadow;
-      }
-      
-      .plan::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: var(--gradient);
-        transform: translateZ(10px);
-        transition: all 0.3s ease;
-      }
-      
-      .plan::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
-        border-radius: 16px;
-        pointer-events: none;
-        transform: translateZ(5px);
-        transition: all 0.3s ease;
-      }
-      
-      .plan:hover {
-        transform: translateY(-15px) rotateX(10deg) rotateY(5deg) scale(1.03) translateZ(30px);
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        border-color: rgba(99, 102, 241, 0.5);
-      }
-      
-      .plan:hover::before {
-        height: 6px;
-        transform: translateZ(20px);
-      }
-      
-      .plan:hover::after {
-        transform: translateZ(15px);
-        background: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
-      }
-      
-      .basic::before { background: linear-gradient(90deg, #00d1b2 0%, #36d1dc 100%); }
-      .standard::before { background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%); }
-      .premium::before { background: linear-gradient(90deg, #f59e0b 0%, #f97316 100%); }
-      
-      .plan h2 {
-        font-size: 1.75rem;
-        margin-bottom: 1rem;
-        color: #fff;
-        font-weight: 700;
-      }
-      
-      .plan p {
-        color: #94a3b8;
-        margin-bottom: 1.5rem;
-        font-size: 1rem;
-      }
-      
-      ul {
-        list-style: none;
-        margin: 1.5rem 0;
-      }
-      
-      ul li {
-        position: relative;
-        padding-left: 1.75rem;
-        margin-bottom: 0.75rem;
-        color: #cbd5e1;
-      }
-      
-      ul li::before {
-        content: '✓';
-        position: absolute;
-        left: 0;
-        color: var(--primary);
-        font-weight: bold;
-      }
-      
-      .cta {
-        margin-top: 2.5rem;
-        text-align: center;
-      }
-      
-      .button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.875rem 2rem;
-        border-radius: 8px;
-        font-weight: 600;
-        text-decoration: none;
-        transition: all 0.3s ease;
+
+      .tab-btn {
+        min-width: unset;
         width: 100%;
-        position: relative;
-        overflow: hidden;
-        z-index: 1;
-        border: none;
-        cursor: pointer;
+        margin: 2px 0;
       }
-      
-      .basic .button { background: linear-gradient(90deg, #00d1b2 0%, #36d1dc 100%); color: #0f172a; }
-      .standard .button { background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%); color: white; }
-      .premium .button { background: linear-gradient(90deg, #f59e0b 0%, #f97316 100%); color: white; }
-      
-      .button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.3);
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 1rem 0.5rem;
       }
-      
-      .button:active {
-        transform: translateY(0);
+
+      .container {
+        padding: 0 0.5rem;
       }
-      
-      .footer {
-        margin-top: 5rem;
-        text-align: center;
-        color: #64748b;
-        font-size: 0.875rem;
+
+      .main-title {
+        font-size: 1.8rem;
       }
-      
-      @media (max-width: 1024px) {
-        .plans {
-          grid-template-columns: 1fr;
-          max-width: 600px;
-          margin: 0 auto;
-        }
-        
-        .header h1 {
-          font-size: 2.5rem;
-        }
-      }
-      
-      /* 3D Floating animation */
-      @keyframes float {
-        0% { 
-          transform: translateY(0px) rotateX(0deg) rotateY(0deg) translateZ(20px);
-          box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.3);
-        }
-        50% { 
-          transform: translateY(-15px) rotateX(5deg) rotateY(5deg) translateZ(30px);
-          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
-        }
-        100% { 
-          transform: translateY(0px) rotateX(0deg) rotateY(0deg) translateZ(20px);
-          box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.3);
-        }
-      }
-      
-      .plan {
-        animation: float 8s ease-in-out infinite;
-        transform-style: preserve-3d;
-        perspective: 1000px;
-      }
-      
-      .plan:nth-child(2) {
-        animation-delay: 0.5s;
-      }
-      
-      .plan:nth-child(3) {
-        animation-delay: 1s;
-      }
-    </style>
-  </head>
-  <body>
-    <canvas id="3d-background"></canvas>
-    <div class="container">
-      <div class="header">
-        <h1>Choose Your Subscription Plan</h1>
-        <p>Scale your growth with a plan tailored to your needs.</p>
-      </div>
-      <div class="plans">
-        <div class="plan basic">
-          <h2>🔹 Basic Plan — ₹5K/month</h2>
-          <p><em>Single provider for each product</em></p>
-          <ul>
-            <li>Unlimited channel expansion</li>
-            <li>Branded network launch tools</li>
-            <li>Earnings tracking dashboard</li>
-            <li>3-month data access</li>
-            <li>Regulation-compliant platform updates</li>
-            <li>Pricing and commission management</li>
-            <li>Customer care manager support</li>
-            <li>Free training sessions</li>
-            <li>GST invoicing (Admin & Network)</li>
-            <li>Device support RM (Admin)</li>
-          </ul>
-          <div class="cta">
-            <a href="https://billing.zohosecure.in/subscribe/009b6e2fe99c044d7c6f3684d0f3ecd71648718ab4cc0d740823bcb88ecfdc2b/1" class="button" target="_blank">Subscribe to Basic</a>
-          </div>
-        </div>
-        <div class="plan standard">
-          <h2>🔸 Standard Plan — ₹15K/month</h2>
-          <p><em>2 providers for multiple products</em></p>
-          <ul>
-            <li>Includes everything in Basic</li>
-            <li>Extended earnings tracking dashboard</li>
-            <li>Admin Eloka ticketing service</li>
-            <li>Network Eloka ticketing service</li>
-            <li>Branded mobile app</li>
-            <li>Option of online deposit for admin</li>
-          </ul>
-          <div class="cta">
-            <a href="https://billing.zohosecure.in/subscribe/009b6e2fe99c044d7c6f3684d0f3ecd71648718ab4cc0d740823bcb88ecfdc2b/2" class="button" target="_blank">Subscribe to Standard</a>
-          </div>
-        </div>
-        <div class="plan premium">
-          <h2>👑 Premium Plan — ₹25K/month</h2>
-          <p><em>2 or more providers for multiple products</em></p>
-          <ul>
-            <li>Includes everything in Standard</li>
-            <li>Tax advisory relationship manager</li>
-            <li>Onboarding support RM</li>
-            <li>Dedicated Admin/network manager</li>
-            <li>Monthly product training (3 sessions)</li>
-            <li>Fund-in dedicated bank account</li>
-            <li>Fund-in/out dedicated bank accounts</li>
-          </ul>
-          <div class="cta">
-            <a href="https://billing.zohosecure.in/subscribe/009b6e2fe99c044d7c6f3684d0f3ecd71648718ab4cc0d740823bcb88ecfdc2b/3" class="button" target="_blank">Subscribe to Premium</a>
-          </div>
-        </div>
-      </div>
-      <div class="footer">
-        <p>Note: All subscription amounts are exclusive of GST.</p>
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="step-indicator">Step 1 of 2</div>
+      <h1 class="main-title">Choose the plan that's right for you</h1>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="tab-navigation">
+      <div class="tab-selector">
+        <button class="tab-btn" data-tab="yearly">
+          Annually
+          <span class="best-value-badge">Best value</span>
+        </button>
+        <button class="tab-btn active" data-tab="monthly">Monthly</button>
+        <button class="tab-btn" data-tab="quarterly">Quarterly</button>
       </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
-    <script>
-      // Enhanced 3D Background with Particles
-      document.addEventListener('DOMContentLoaded', () => {
-        // Scene setup
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({
-          canvas: document.getElementById('3d-background'),
-          alpha: true,
-          antialias: true
-        });
-        
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        
-        // Camera position
-        camera.position.z = 30;
-        
-        // Create particles
-        const particlesGeometry = new THREE.BufferGeometry();
-        const particleCount = 5000;
-        
-        const posArray = new Float32Array(particleCount * 3);
-        
-        for (let i = 0; i < particleCount * 3; i++) {
-          posArray[i] = (Math.random() - 0.5) * 100;
-        }
-        
-        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        
-        // Particle material
-        const particlesMaterial = new THREE.PointsMaterial({
-          size: 0.1,
-          color: '#4f46e5',
-          transparent: true,
-          opacity: 0.8,
-          blending: THREE.AdditiveBlending
-        });
-        
-        // Create particle system
-        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-        scene.add(particlesMesh);
-        
-        // Add a light
-        const light = new THREE.PointLight(0xffffff, 1);
-        light.position.set(10, 10, 10);
-        scene.add(light);
-        
-        // Add floating shapes
-        const shapes = [];
-        const shapeGeometry = new THREE.IcosahedronGeometry(1, 0);
-        const shapeMaterial = new THREE.MeshPhongMaterial({
-          color: 0x00d1b2,
-          wireframe: true,
-          transparent: true,
-          opacity: 0.6,
-          shininess: 100
-        });
-        
-        // Create multiple floating shapes
-        for (let i = 0; i < 5; i++) {
-          const shape = new THREE.Mesh(shapeGeometry, shapeMaterial.clone());
-          shape.position.set(
-            (Math.random() - 0.5) * 40,
-            (Math.random() - 0.5) * 40,
-            (Math.random() - 0.5) * 40
-          );
-          shape.scale.setScalar(5 + Math.random() * 5);
-          shape.rotation.set(
-            Math.random() * Math.PI,
-            Math.random() * Math.PI,
-            0
-          );
-          shapes.push({
-            mesh: shape,
-            speed: 0.1 + Math.random() * 0.2,
-            rotation: {
-              x: (Math.random() - 0.5) * 0.01,
-              y: (Math.random() - 0.5) * 0.01,
-              z: (Math.random() - 0.5) * 0.01
-            }
-          });
-          scene.add(shape);
-        }
-        
-        // Mouse movement effect
-        let mouseX = 0;
-        let mouseY = 0;
-        let targetX = 0;
-        let targetY = 0;
-        const windowHalfX = window.innerWidth / 2;
-        const windowHalfY = window.innerHeight / 2;
-        
-        document.addEventListener('mousemove', (event) => {
-          mouseX = (event.clientX - windowHalfX) * 0.001;
-          mouseY = (event.clientY - windowHalfY) * 0.001;
-        });
-        
-        // Animation loop
-        const clock = new THREE.Clock();
-        
-        function animate() {
-          requestAnimationFrame(animate);
-          
-          const elapsedTime = clock.getElapsedTime();
-          
-          // Update particles
-          const positions = particlesGeometry.attributes.position.array;
-          for (let i = 0; i < positions.length; i += 3) {
-            positions[i + 1] += Math.sin(elapsedTime * 0.5 + positions[i] * 0.01) * 0.05;
-            positions[i] += Math.cos(elapsedTime * 0.3 + positions[i + 1] * 0.01) * 0.05;
-            positions[i + 2] += Math.sin(elapsedTime * 0.2 + positions[i + 2] * 0.01) * 0.05;
-          }
-          particlesGeometry.attributes.position.needsUpdate = true;
-          
-          // Update shapes
-          shapes.forEach((shape, i) => {
-            shape.mesh.rotation.x += shape.rotation.x;
-            shape.mesh.rotation.y += shape.rotation.y;
-            shape.mesh.rotation.z += shape.rotation.z;
-            
-            // Float up and down
-            shape.mesh.position.y += Math.sin(elapsedTime * shape.speed) * 0.05;
-          });
-          
-          // Smooth camera movement based on mouse position
-          targetX = mouseX * 20;
-          targetY = -mouseY * 20;
-          
-          camera.position.x += (targetX - camera.position.x) * 0.05;
-          camera.position.y += (targetY - camera.position.y) * 0.05;
-          
-          // Make camera look at center
-          camera.lookAt(scene.position);
-          
-          renderer.render(scene, camera);
-        }
-        
-        // Handle window resize
-        function onWindowResize() {
-          camera.aspect = window.innerWidth / window.innerHeight;
-          camera.updateProjectionMatrix();
-          renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-        
-        window.addEventListener('resize', onWindowResize, false);
-        
-        // Start animation
-        animate();
-        
-        // Enhanced 3D effect for plans
-        const plans = document.querySelectorAll('.plan');
-        
-        plans.forEach((plan, index) => {
-          // Store initial transform values
-          const initialTransform = {
-            x: 0,
-            y: 0,
-            z: 20,
-            rotateX: 0,
-            rotateY: 0,
-            scale: 1
-          };
-          
-          // Add depth on hover
-          plan.addEventListener('mouseenter', () => {
-            gsap.to(plan, {
-              '--depth': '30px',
-              duration: 0.5,
-              ease: 'power2.out'
-            });
-          });
-          
-          plan.addEventListener('mouseleave', () => {
-            gsap.to(plan, {
-              '--depth': '20px',
-              duration: 0.5,
-              ease: 'elastic.out(1, 0.5)'
-            });
-          });
-          
-          // 3D tilt effect based on mouse position
-          plan.addEventListener('mousemove', (e) => {
-            const rect = plan.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            // Calculate rotation based on mouse position
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            
-            const rotateX = (y - centerY) / 30;
-            const rotateY = (centerX - x) / 30;
-            
-            // Add perspective to the transform
-            plan.style.transform = `
-              perspective(1000px)
-              rotateX(${rotateX}deg)
-              rotateY(${rotateY}deg)
-              translateZ(calc(var(--depth, 20px) * 1.5))
-              scale(1.03)
-            `;
-            
-            // Add subtle shadow based on tilt
-            const shadowX = rotateY * 10;
-            const shadowY = rotateX * 10;
-            plan.style.boxShadow = `${shadowX}px ${shadowY}px 30px rgba(0, 0, 0, 0.3)`;
-            
-            // Add lighting effect
-            plan.style.setProperty('--light-pos-x', `${(x / rect.width) * 100}%`);
-            plan.style.setProperty('--light-pos-y', `${(y / rect.height) * 100}%`);
-          });
-          
-          // Reset on mouse leave
-          plan.addEventListener('mouseleave', () => {
-            gsap.to(plan, {
-              rotateX: 0,
-              rotateY: 0,
-              scale: 1,
-              x: 0,
-              y: 0,
-              boxShadow: '0 10px 30px -15px rgba(0, 0, 0, 0.3)',
-              duration: 1,
-              ease: 'elastic.out(1, 0.5)',
-              clearProps: 'transform, box-shadow, --light-pos-x, --light-pos-y'
-            });
-          });
-          
-          // Add staggered animation delay
-          gsap.set(plan, { '--delay': index * 0.1 });
-        });
-        
-        // Add global mousemove for light effect
-        document.addEventListener('mousemove', (e) => {
-          const x = e.clientX / window.innerWidth;
-          const y = e.clientY / window.innerHeight;
-          
-          document.documentElement.style.setProperty('--global-light-x', `${x * 100}%`);
-          document.documentElement.style.setProperty('--global-light-y', `${y * 100}%`);
-        });
+
+    <!-- Plans Container -->
+    <div class="plans-container">
+      <!-- Monthly Plans -->
+      <div class="tab-content active" id="monthly">
+        <div class="plans-grid">
+          <!-- Basic Plan -->
+          <div class="plan-card basic">
+            <div class="plan-header">
+              <h3 class="plan-name">Basic</h3>
+              <div class="plan-price">
+                <span class="currency">₹</span>
+                <span class="amount">5K</span>
+                <span class="period">/month</span>
+              </div>
+              <p class="plan-desc">Single provider for each product</p>
+              <div class="quality-info">
+                <div class="quality-badge">Essential</div>
+                <div class="quality-subtitle">Core network features</div>
+              </div>
+            </div>
+            <div class="plan-features">
+              <div class="feature">Unlimited channel expansion</div>
+              <div class="feature">Branded network launch tools</div>
+              <div class="feature">Earnings tracking dashboard</div>
+              <div class="feature">3-month data access</div>
+              <div class="feature">Regulation-compliant platform updates</div>
+              <div class="feature">Pricing and commission management</div>
+              <div class="feature">Customer care manager support</div>
+              <div class="feature">Free training sessions</div>
+              <div class="feature">GST invoicing (Admin & Network)</div>
+              <div class="feature">Device support RM (Admin)</div>
+            </div>
+            <button class="subscribe-btn">Get Started</button>
+          </div>
+
+          <!-- Standard Plan -->
+          <div class="plan-card recommended">
+            <div class="recommended-badge">Most Popular</div>
+            <div class="plan-header">
+              <h3 class="plan-name">Standard</h3>
+              <div class="plan-price">
+                <span class="currency">₹</span>
+                <span class="amount">15K</span>
+                <span class="period">/month</span>
+              </div>
+              <p class="plan-desc">2 providers for multiple products</p>
+              <div class="quality-info">
+                <div class="quality-badge">Professional</div>
+                <div class="quality-subtitle">Enhanced business features</div>
+              </div>
+            </div>
+            <div class="plan-features">
+              <div class="feature">Everything in Basic</div>
+              <div class="feature">Extended earnings tracking dashboard</div>
+              <div class="feature">Admin Eloka ticketing service</div>
+              <div class="feature">Network Eloka ticketing service</div>
+              <div class="feature">Branded mobile app</div>
+              <div class="feature">Option of online deposit for admin</div>
+            </div>
+            <button class="subscribe-btn">Get Started</button>
+          </div>
+
+          <!-- Premium Plan -->
+          <div class="plan-card premium">
+            <div class="plan-header">
+              <h3 class="plan-name">Premium</h3>
+              <div class="plan-price">
+                <span class="currency">₹</span>
+                <span class="amount">25K</span>
+                <span class="period">/month</span>
+              </div>
+              <p class="plan-desc">2 or more providers for multiple products</p>
+              <div class="quality-info">
+                <div class="quality-badge">Enterprise</div>
+                <div class="quality-subtitle">Complete business solution</div>
+              </div>
+            </div>
+            <div class="plan-features">
+              <div class="feature">Everything in Standard</div>
+              <div class="feature">Tax advisory relationship manager</div>
+              <div class="feature">Onboarding support RM</div>
+              <div class="feature">Dedicated Admin/network manager</div>
+              <div class="feature">Monthly product training (3 sessions)</div>
+              <div class="feature">Fund-in dedicated bank account</div>
+              <div class="feature">Fund-in/out dedicated bank accounts</div>
+            </div>
+            <button class="subscribe-btn">Get Started</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quarterly Plans -->
+      <div class="tab-content" id="quarterly">
+        <div class="plans-grid">
+          <!-- Basic Plan -->
+          <div class="plan-card basic">
+            <div class="savings-badge">Save 10%</div>
+            <div class="plan-header">
+              <h3 class="plan-name">Basic</h3>
+              <div class="plan-price">
+                <span class="currency">₹</span>
+                <span class="amount">13.5K</span>
+                <span class="period">/quarter</span>
+              </div>
+              <p class="plan-desc">Single provider for each product</p>
+              <div class="quality-info">
+                <div class="quality-badge">Essential</div>
+                <div class="quality-subtitle">Core network features</div>
+              </div>
+            </div>
+            <div class="plan-features">
+              <div class="feature">Unlimited channel expansion</div>
+              <div class="feature">Branded network launch tools</div>
+              <div class="feature">Earnings tracking dashboard</div>
+              <div class="feature">3-month data access</div>
+              <div class="feature">Regulation-compliant platform updates</div>
+              <div class="feature">Pricing and commission management</div>
+              <div class="feature">Customer care manager support</div>
+              <div class="feature">Free training sessions</div>
+              <div class="feature">GST invoicing (Admin & Network)</div>
+              <div class="feature">Device support RM (Admin)</div>
+            </div>
+            <button class="subscribe-btn">Get Started</button>
+          </div>
+
+          <!-- Standard Plan -->
+          <div class="plan-card recommended">
+            <div class="recommended-badge">Most Popular</div>
+            <div class="savings-badge">Save 10%</div>
+            <div class="plan-header">
+              <h3 class="plan-name">Standard</h3>
+              <div class="plan-price">
+                <span class="currency">₹</span>
+                <span class="amount">40.5K</span>
+                <span class="period">/quarter</span>
+              </div>
+              <p class="plan-desc">2 providers for multiple products</p>
+              <div class="quality-info">
+                <div class="quality-badge">Professional</div>
+                <div class="quality-subtitle">Enhanced business features</div>
+              </div>
+            </div>
+            <div class="plan-features">
+              <div class="feature">Everything in Basic</div>
+              <div class="feature">Extended earnings tracking dashboard</div>
+              <div class="feature">Admin Eloka ticketing service</div>
+              <div class="feature">Network Eloka ticketing service</div>
+              <div class="feature">Branded mobile app</div>
+              <div class="feature">Option of online deposit for admin</div>
+            </div>
+            <button class="subscribe-btn">Get Started</button>
+          </div>
+
+          <!-- Premium Plan -->
+          <div class="plan-card premium">
+            <div class="savings-badge">Save 10%</div>
+            <div class="plan-header">
+              <h3 class="plan-name">Premium</h3>
+              <div class="plan-price">
+                <span class="currency">₹</span>
+                <span class="amount">67.5K</span>
+                <span class="period">/quarter</span>
+              </div>
+              <p class="plan-desc">2 or more providers for multiple products</p>
+              <div class="quality-info">
+                <div class="quality-badge">Enterprise</div>
+                <div class="quality-subtitle">Complete business solution</div>
+              </div>
+            </div>
+            <div class="plan-features">
+              <div class="feature">Everything in Standard</div>
+              <div class="feature">Tax advisory relationship manager</div>
+              <div class="feature">Onboarding support RM</div>
+              <div class="feature">Dedicated Admin/network manager</div>
+              <div class="feature">Monthly product training (3 sessions)</div>
+              <div class="feature">Fund-in dedicated bank account</div>
+              <div class="feature">Fund-in/out dedicated bank accounts</div>
+            </div>
+            <button class="subscribe-btn">Get Started</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Yearly Plans -->
+      <div class="tab-content" id="yearly">
+        <div class="plans-grid">
+          <!-- Basic Plan -->
+          <div class="plan-card basic">
+            <div class="savings-badge">Save 17%</div>
+            <div class="plan-header">
+              <h3 class="plan-name">Basic</h3>
+              <div class="plan-price">
+                <span class="currency">₹</span>
+                <span class="amount">50K</span>
+                <span class="period">/year</span>
+              </div>
+              <p class="plan-desc">Single provider for each product</p>
+              <div class="quality-info">
+                <div class="quality-badge">Essential</div>
+                <div class="quality-subtitle">Core network features</div>
+              </div>
+            </div>
+            <div class="plan-features">
+              <div class="feature">Unlimited channel expansion</div>
+              <div class="feature">Branded network launch tools</div>
+              <div class="feature">Earnings tracking dashboard</div>
+              <div class="feature">3-month data access</div>
+              <div class="feature">Regulation-compliant platform updates</div>
+              <div class="feature">Pricing and commission management</div>
+              <div class="feature">Customer care manager support</div>
+              <div class="feature">Free training sessions</div>
+              <div class="feature">GST invoicing (Admin & Network)</div>
+              <div class="feature">Device support RM (Admin)</div>
+            </div>
+            <button class="subscribe-btn">Get Started</button>
+          </div>
+
+          <!-- Standard Plan -->
+          <div class="plan-card recommended">
+            <div class="recommended-badge">Most Popular</div>
+            <div class="savings-badge">Save 17%</div>
+            <div class="plan-header">
+              <h3 class="plan-name">Standard</h3>
+              <div class="plan-price">
+                <span class="currency">₹</span>
+                <span class="amount">150K</span>
+                <span class="period">/year</span>
+              </div>
+              <p class="plan-desc">2 providers for multiple products</p>
+              <div class="quality-info">
+                <div class="quality-badge">Professional</div>
+                <div class="quality-subtitle">Enhanced business features</div>
+              </div>
+            </div>
+            <div class="plan-features">
+              <div class="feature">Everything in Basic</div>
+              <div class="feature">Extended earnings tracking dashboard</div>
+              <div class="feature">Admin Eloka ticketing service</div>
+              <div class="feature">Network Eloka ticketing service</div>
+              <div class="feature">Branded mobile app</div>
+              <div class="feature">Option of online deposit for admin</div>
+            </div>
+            <button class="subscribe-btn">Get Started</button>
+          </div>
+
+          <!-- Premium Plan -->
+          <div class="plan-card premium">
+            <div class="savings-badge">Save 17%</div>
+            <div class="plan-header">
+              <h3 class="plan-name">Premium</h3>
+              <div class="plan-price">
+                <span class="currency">₹</span>
+                <span class="amount">250K</span>
+                <span class="period">/year</span>
+              </div>
+              <p class="plan-desc">2 or more providers for multiple products</p>
+              <div class="quality-info">
+                <div class="quality-badge">Enterprise</div>
+                <div class="quality-subtitle">Complete business solution</div>
+              </div>
+            </div>
+            <div class="plan-features">
+              <div class="feature">Everything in Standard</div>
+              <div class="feature">Tax advisory relationship manager</div>
+              <div class="feature">Onboarding support RM</div>
+              <div class="feature">Dedicated Admin/network manager</div>
+              <div class="feature">Monthly product training (3 sessions)</div>
+              <div class="feature">Fund-in dedicated bank account</div>
+              <div class="feature">Fund-in/out dedicated bank accounts</div>
+            </div>
+            <button class="subscribe-btn">Get Started</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>💡 <strong>Note:</strong> All subscription amounts are exclusive of GST.</p>
+      <p>Need help choosing? Contact your relationship manager for assistance.</p>
+    </div>
+  </div>
+
+  <script>
+    // Tab functionality
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Remove active class from all buttons and contents
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        tabContents.forEach(content => content.classList.remove('active'));
+
+        // Add active class to clicked button and corresponding content
+        button.classList.add('active');
+        const tabId = button.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
       });
-    </script>
-  </body>
+    });
+
+    // Add interactive animations for buttons
+    document.querySelectorAll('.subscribe-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        // Create ripple effect
+        const ripple = document.createElement('span');
+        const rect = btn.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+        
+        ripple.style.cssText = `
+          position: absolute;
+          width: ${size}px;
+          height: ${size}px;
+          left: ${x}px;
+          top: ${y}px;
+          background: rgba(255, 255, 255, 0.3);
+          border-radius: 50%;
+          transform: scale(0);
+          animation: rippleEffect 0.6s ease-out;
+          pointer-events: none;
+        `;
+        
+        btn.style.position = 'relative';
+        btn.style.overflow = 'hidden';
+        btn.appendChild(ripple);
+        
+        setTimeout(() => {
+          ripple.remove();
+        }, 600);
+        
+        // Simulate subscription process
+        const originalText = btn.textContent;
+        btn.textContent = 'Processing...';
+        btn.disabled = true;
+        
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }, 2000);
+      });
+    });
+
+    // Add CSS for ripple animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes rippleEffect {
+        to {
+          transform: scale(2);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
 </html>
