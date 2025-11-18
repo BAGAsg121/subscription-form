@@ -358,18 +358,33 @@ buttons.forEach(btn => {
       const back = card.querySelector('.card-back');
       const annual = card.querySelector('.card-annual');
 
+      // Reset all views
       front.style.opacity = "0";
+      front.style.zIndex = "1";
+      front.style.pointerEvents = "none";
+      
       back.style.opacity = "0";
+      back.style.zIndex = "1";
+      back.style.pointerEvents = "none";
+      
       annual.classList.remove("show");
+      annual.style.zIndex = "1";
+      annual.style.pointerEvents = "none";
 
       if (plan === 'monthly') {
         front.style.opacity = "1";
+        front.style.zIndex = "3";
+        front.style.pointerEvents = "auto";
         card.classList.remove('flip');
       } else if (plan === 'quarterly') {
         back.style.opacity = "1";
+        back.style.zIndex = "3";
+        back.style.pointerEvents = "auto";
         card.classList.add('flip');
       } else {
         annual.classList.add('show');
+        annual.style.zIndex = "4";
+        annual.style.pointerEvents = "auto";
         card.classList.remove('flip');
       }
     });
@@ -379,5 +394,3 @@ buttons.forEach(btn => {
 
 </body>
 </html>
-
-
