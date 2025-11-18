@@ -100,19 +100,23 @@ body {
   backface-visibility: hidden;
   opacity: 0;
   transform: rotateY(180deg);
+  pointer-events: none;
 }
 .card-front {
   opacity: 1;
   transform: rotateY(0deg);
   z-index: 2;
+  pointer-events: auto;
 }
 .card-back {
   z-index: 1;
+  pointer-events: none;
 }
 .card-annual {
   opacity: 0;
   transform: translateY(40px);
-  z-index: 3;
+  z-index: 0;
+  pointer-events: none;
 }
 
 /* Annual Card Animation */
@@ -120,6 +124,7 @@ body {
   opacity: 1 !important;
   transform: translateY(0);
   z-index: 4;
+  pointer-events: auto;
 }
 
 /* ========== CARD CONTENT ========== */
@@ -358,19 +363,20 @@ buttons.forEach(btn => {
       const back = card.querySelector('.card-back');
       const annual = card.querySelector('.card-annual');
 
-      // Reset all views
+      // Reset all views (clear visibility and interaction)
       front.style.opacity = "0";
       front.style.zIndex = "1";
       front.style.pointerEvents = "none";
-      
+
       back.style.opacity = "0";
       back.style.zIndex = "1";
       back.style.pointerEvents = "none";
-      
+
       annual.classList.remove("show");
-      annual.style.zIndex = "1";
+      annual.style.zIndex = "0";
       annual.style.pointerEvents = "none";
 
+      // Enable the selected plan view only
       if (plan === 'monthly') {
         front.style.opacity = "1";
         front.style.zIndex = "3";
@@ -381,8 +387,9 @@ buttons.forEach(btn => {
         back.style.zIndex = "3";
         back.style.pointerEvents = "auto";
         card.classList.add('flip');
-      } else {
+      } else { // annually
         annual.classList.add('show');
+        // .show CSS already sets z-index and pointer-events, but set them defensively:
         annual.style.zIndex = "4";
         annual.style.pointerEvents = "auto";
         card.classList.remove('flip');
@@ -394,3 +401,4 @@ buttons.forEach(btn => {
 
 </body>
 </html>
+
